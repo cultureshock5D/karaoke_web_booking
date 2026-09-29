@@ -1,0 +1,119 @@
+{
+  "projectId": "karaoke_booking",
+  "projectName": "Karaoke Booking Platform",
+  "databases": [
+    {
+      "$id": "karaoke_db",
+      "name": "Karaoke Booking DB",
+      "enabled": true
+    }
+  ],
+  "collections": [
+    {
+      "$id": "venues",
+      "$permissions": ["read(\"any\")"],
+      "databaseId": "karaoke_db",
+      "name": "Venues",
+      "enabled": true,
+      "documentSecurity": true,
+      "attributes": [
+        { "key": "teamId", "type": "string", "size": 64, "required": true },
+        { "key": "name", "type": "string", "size": 128, "required": true },
+        { "key": "slug", "type": "string", "size": 64, "required": true },
+        { "key": "contactEmail", "type": "string", "size": 128, "required": true },
+        { "key": "contactPhone", "type": "string", "size": 32, "required": true },
+        { "key": "address", "type": "string", "size": 255, "required": true },
+        { "key": "timezone", "type": "string", "size": 64, "required": false, "default": "Asia/Manila" },
+        { "key": "currency", "type": "string", "size": 10, "required": false, "default": "PHP" },
+        { "key": "depositType", "type": "string", "size": 16, "required": false, "default": "fixed" },
+        { "key": "depositValue", "type": "double", "required": false, "default": 300 },
+        { "key": "holdDurationMinutes", "type": "integer", "required": false, "default": 15 },
+        { "key": "openingHour", "type": "integer", "required": false, "default": 13 },
+        { "key": "closingHour", "type": "integer", "required": false, "default": 2 },
+        { "key": "slotIntervalMinutes", "type": "integer", "required": false, "default": 60 },
+        { "key": "logoUrl", "type": "string", "size": 512, "required": false },
+        { "key": "coverImageUrl", "type": "string", "size": 512, "required": false },
+        { "key": "isActive", "type": "boolean", "required": false, "default": true }
+      ],
+      "indexes": [
+        { "key": "idx_venues_slug", "type": "unique", "attributes": ["slug"], "orders": ["ASC"] }
+      ]
+    },
+    {
+      "$id": "rooms",
+      "$permissions": ["read(\"any\")"],
+      "databaseId": "karaoke_db",
+      "name": "Rooms",
+      "enabled": true,
+      "documentSecurity": true,
+      "attributes": [
+        { "key": "venueId", "type": "string", "size": 64, "required": true },
+        { "key": "name", "type": "string", "size": 100, "required": true },
+        { "key": "slug", "type": "string", "size": 64, "required": false },
+        { "key": "capacityMin", "type": "integer", "required": false, "default": 1 },
+        { "key": "capacityMax", "type": "integer", "required": true },
+        { "key": "baseHourlyRate", "type": "double", "required": true },
+        { "key": "description", "type": "string", "size": 1000, "required": false },
+        { "key": "isActive", "type": "boolean", "required": false, "default": true },
+        { "key": "sortOrder", "type": "integer", "required": false, "default": 0 }
+      ],
+      "indexes": [
+        { "key": "idx_rooms_venue", "type": "key", "attributes": ["venueId"], "orders": ["ASC"] }
+      ]
+    },
+    {
+      "$id": "slots",
+      "$permissions": ["read(\"any\")"],
+      "databaseId": "karaoke_db",
+      "name": "Slots",
+      "enabled": true,
+      "documentSecurity": true,
+      "attributes": [
+        { "key": "slotKey", "type": "string", "size": 128, "required": true },
+        { "key": "roomId", "type": "string", "size": 64, "required": true },
+        { "key": "venueId", "type": "string", "size": 64, "required": true },
+        { "key": "bookingId", "type": "string", "size": 64, "required": true },
+        { "key": "slotStart", "type": "string", "size": 64, "required": true },
+        { "key": "slotEnd", "type": "string", "size": 64, "required": true },
+        { "key": "status", "type": "string", "size": 32, "required": true },
+        { "key": "heldUntil", "type": "string", "size": 64, "required": true }
+      ],
+      "indexes": [
+        { "key": "idx_unique_slot_key", "type": "unique", "attributes": ["slotKey"], "orders": ["ASC"] },
+        { "key": "idx_slots_room_time", "type": "key", "attributes": ["roomId", "slotStart"], "orders": ["ASC", "ASC"] },
+        { "key": "idx_slots_held_until", "type": "key", "attributes": ["heldUntil", "status"], "orders": ["ASC", "ASC"] }
+      ]
+    },
+    {
+      "$id": "bookings",
+      "$permissions": [],
+      "databaseId": "karaoke_db",
+      "name": "Bookings",
+      "enabled": true,
+      "documentSecurity": true,
+      "attributes": [
+        { "key": "venueId", "type": "string", "size": 64, "required": true },
+        { "key": "roomId", "type": "string", "size": 64, "required": true },
+        { "key": "bookingReference", "type": "string", "size": 64, "required": true },
+        { "key": "status", "type": "string", "size": 32, "required": true },
+        { "key": "startDateTime", "type": "string", "size": 64, "required": true },
+        { "key": "endDateTime", "type": "string", "size": 64, "required": true },
+        { "key": "durationHours", "type": "double", "required": true },
+        { "key": "guestCount", "type": "integer", "required": true },
+        { "key": "customer", "type": "string", "size": 2000, "required": true },
+        { "key": "addOns", "type": "string", "size": 4000, "required": false, "default": "[]" },
+        { "key": "pricing", "type": "string", "size": 2000, "required": true },
+        { "key": "payment", "type": "string", "size": 2000, "required": true },
+        { "key": "heldUntil", "type": "string", "size": 64, "required": true },
+        { "key": "magicLinkToken", "type": "string", "size": 128, "required": true },
+        { "key": "cancellationReason", "type": "string", "size": 500, "required": false },
+        { "key": "notes", "type": "string", "size": 1000, "required": false }
+      ],
+      "indexes": [
+        { "key": "idx_booking_ref", "type": "unique", "attributes": ["bookingReference"], "orders": ["ASC"] },
+        { "key": "idx_booking_magic_link", "type": "unique", "attributes": ["magicLinkToken"], "orders": ["ASC"] },
+        { "key": "idx_bookings_venue_status", "type": "key", "attributes": ["venueId", "status"], "orders": ["ASC", "ASC"] }
+      ]
+    }
+  ]
+}

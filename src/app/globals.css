@@ -1,0 +1,85 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme inline {
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-heading: var(--font-space-grotesk), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--primary-foreground));
+  --color-surface: hsl(var(--surface));
+  --color-surface-raised: hsl(var(--surface-raised));
+  --color-card: hsl(var(--surface));
+  --color-card-foreground: hsl(var(--foreground));
+  --color-popover: hsl(var(--surface-raised));
+  --color-popover-foreground: hsl(var(--foreground));
+  --color-muted: hsl(var(--surface-raised));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--border));
+  --color-ring: hsl(var(--accent));
+  --color-success: hsl(var(--success));
+  --color-warning: hsl(var(--warning));
+  --color-destructive: hsl(var(--destructive));
+
+  --radius-none: 0px;
+  --radius-sm: 0px;
+  --radius-md: 2px;
+  --radius-lg: 4px;
+}
+
+:root {
+  --background: 0 0% 7%;            /* #111111 */
+  --foreground: 0 0% 95%;           /* #f2f2f2 */
+  --primary: 0 0% 95%;              /* #f2f2f2 */
+  --primary-foreground: 0 0% 7%;    /* #111111 */
+  --accent: 20 82% 50%;             /* electric orange #e85c1a */
+  --surface: 0 0% 10%;              /* #1a1a1a */
+  --surface-raised: 0 0% 14%;       /* #242424 */
+  --muted-foreground: 0 0% 68%;     /* 68% lightness passes AA contrast on #111111 */
+  --border: 0 0% 18%;               /* #2e2e2e */
+  --success: 142 60% 45%;           /* booking confirmed */
+  --warning: 38 92% 55%;            /* hold countdown */
+  --destructive: 0 72% 55%;         /* conflict / expired */
+  --radius: 2px;
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+    box-sizing: border-box;
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-inter), sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-space-grotesk), sans-serif;
+  }
+}
+
+.font-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.eyebrow {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
