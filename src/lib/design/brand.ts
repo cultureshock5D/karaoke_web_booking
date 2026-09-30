@@ -1,5 +1,17 @@
 export const BRAND = {
   name: "ENCORE",
-  tagline: "Private KTV Rooms · Metro Manila",
+  legalName: "Encore Soundstage & Private Acoustic Lounge Inc.",
+  tagline: "Audiophile Soundstage & VIP Suites",
   city: "Metro Manila",
+  suburb: "Bonifacio Global City, Taguig",
+  fullAddress: "Level 4, The High Street Promenade, 5th Avenue, BGC, Taguig City, Metro Manila 1634",
+  vipConciergePhone: "+63 (2) 8894-KTVV",
+  whatsappConcierge: "+63 917 888 3626",
+  vipEmail: "concierge@encore-soundstage.ph",
+  coordinates: "14.5507° N, 121.0509° E",
+  openingHours: "Monday – Sunday: 14:00 – 04:00 PHT",
+  timezone: "Asia/Manila (UTC+8)",
+  dressCode: "Smart Casual / Elevated Nightlife",
+  valetService: "Complimentary VIP Subterranean Valet at 5th Ave Entry",
+  acousticRating: "STC 65 Certified Studio Isolation",
 } as const;

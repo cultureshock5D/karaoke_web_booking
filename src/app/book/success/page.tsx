@@ -1,140 +1,216 @@
-'use client';
+"use client";
 
-import React, { Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import { CheckCircle2, Clock, XCircle, MapPin, MessageSquare, ArrowRight, Home } from 'lucide-react';
-import { BRAND } from '@/lib/design/brand';
-import { Navbar } from '@/components/layout/Navbar';
-import { Footer } from '@/components/layout/Footer';
+import React, { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { BRAND } from "@/lib/design/brand";
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
+import { DoubleBezel } from "@/components/ui/DoubleBezel";
+import { LuxuryBadge } from "@/components/ui/LuxuryBadge";
+import { AmbientGlow } from "@/components/ui/AmbientGlow";
+import { Button } from "@/components/ui/button";
 
 function BookingSuccessContent() {
   const searchParams = useSearchParams();
-  const ref = searchParams.get('ref') || 'KTV-7A9-B21';
-  const statusParam = searchParams.get('status') || 'confirmed';
+  const ref = searchParams.get("ref") || "KTV-7A9-B21";
+  const statusParam = searchParams.get("status") || "confirmed";
 
-  const isConfirmed = statusParam === 'confirmed';
-  const isPending = statusParam === 'pending';
-  const isFailed = statusParam === 'failed' || statusParam === 'cancelled' || statusParam === 'expired';
+  const isConfirmed = statusParam === "confirmed";
+  const isPending = statusParam === "pending";
+  const isFailed =
+    statusParam === "failed" ||
+    statusParam === "cancelled" ||
+    statusParam === "expired";
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
+    <div className="min-h-screen flex flex-col bg-[#050507] text-[#f4f4f6] relative select-none">
+      <AmbientGlow variant="hero" />
       <Navbar isSlim={true} />
 
-      <main className="flex-1 flex items-center justify-center p-4 py-16">
-        <div className="max-w-xl w-full bg-surface border border-border rounded-[2px] p-6 sm:p-10 shadow-2xl space-y-8">
-          {/* Status Badge & Header */}
-          <div className="text-center space-y-3">
-            {isConfirmed && (
-              <>
-                <div className="w-16 h-16 bg-success/10 border border-success/30 text-success rounded-[2px] flex items-center justify-center mx-auto">
-                  <CheckCircle2 className="w-9 h-9 stroke-[2.5]" />
-                </div>
-                <div className="inline-block px-3 py-1 bg-success/15 border border-success/30 text-success text-[11px] font-mono font-bold uppercase tracking-[0.16em] rounded-[2px]">
-                  Booking Confirmed
-                </div>
-                <h1 className="font-heading font-bold text-2xl sm:text-3xl uppercase tracking-tight text-foreground">
-                  Your Room Is Locked
-                </h1>
-                <p className="text-xs sm:text-sm text-muted-foreground font-light max-w-sm mx-auto leading-relaxed">
-                  Your deposit has been verified and your private suite is guaranteed.
-                </p>
-              </>
-            )}
+      <main className="flex-1 flex items-center justify-center p-4 py-24 sm:py-32 relative z-10">
+        <div className="max-w-2xl w-full space-y-6">
+          <DoubleBezel
+            variant={isConfirmed ? "accent" : isPending ? "default" : "subtle"}
+            size="xl"
+            glowColor={isConfirmed ? "orange" : "none"}
+            className="w-full"
+            innerClassName="p-6 sm:p-10 bg-[#08080c] space-y-8"
+          >
+            {/* Status Header */}
+            <div className="text-center space-y-3">
+              {isConfirmed && (
+                <>
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#10b981]/15 border border-[#10b981]/30 text-[#10b981] mx-auto shadow-[0_0_25px_rgba(16,185,129,0.3)]">
+                    <svg
+                      className="w-8 h-8"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M4.5 12.75l6 6 9-13.5"
+                      />
+                    </svg>
+                  </div>
+                  <LuxuryBadge pulse pulseColor="emerald" variant="default" className="text-[10px]">
+                    Deposit Verified & Slot Locked
+                  </LuxuryBadge>
+                  <h1 className="font-heading font-bold text-3xl sm:text-4xl uppercase tracking-tight text-white">
+                    Your Stage Is Guaranteed
+                  </h1>
+                  <p className="text-xs sm:text-sm text-[#a0a1b0] max-w-md mx-auto leading-relaxed">
+                    Your cryptographic slot hold has converted to a confirmed
+                    private reservation. An instant digital entry voucher was
+                    dispatched to your contact details.
+                  </p>
+                </>
+              )}
 
-            {isPending && (
-              <>
-                <div className="w-16 h-16 bg-warning/10 border border-warning/30 text-warning rounded-[2px] flex items-center justify-center mx-auto">
-                  <Clock className="w-9 h-9 stroke-[2.5]" />
-                </div>
-                <div className="inline-block px-3 py-1 bg-warning/15 border border-warning/30 text-warning text-[11px] font-mono font-bold uppercase tracking-[0.16em] rounded-[2px]">
-                  Payment Pending
-                </div>
-                <h1 className="font-heading font-bold text-2xl sm:text-3xl uppercase tracking-tight text-foreground">
-                  Awaiting Payment Confirmation
-                </h1>
-                <p className="text-xs sm:text-sm text-muted-foreground font-light max-w-sm mx-auto leading-relaxed">
-                  Your slot is held while payment verification completes.
-                </p>
-              </>
-            )}
+              {isPending && (
+                <>
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#f59e0b]/15 border border-[#f59e0b]/30 text-[#f59e0b] mx-auto shadow-[0_0_25px_rgba(245,158,11,0.3)]">
+                    <span className="text-2xl font-bold">⏳</span>
+                  </div>
+                  <LuxuryBadge pulse pulseColor="orange" variant="default" className="text-[10px]">
+                    Payment Authorization Pending
+                  </LuxuryBadge>
+                  <h1 className="font-heading font-bold text-3xl sm:text-4xl uppercase tracking-tight text-white">
+                    Verifying Payment Channel
+                  </h1>
+                  <p className="text-xs sm:text-sm text-[#a0a1b0] max-w-md mx-auto leading-relaxed">
+                    We are waiting for your bank or e-wallet to return the
+                    settlement webhook. Your room remains locked.
+                  </p>
+                </>
+              )}
 
-            {isFailed && (
-              <>
-                <div className="w-16 h-16 bg-destructive/10 border border-destructive/30 text-destructive rounded-[2px] flex items-center justify-center mx-auto">
-                  <XCircle className="w-9 h-9 stroke-[2.5]" />
-                </div>
-                <div className="inline-block px-3 py-1 bg-destructive/15 border border-destructive/30 text-destructive text-[11px] font-mono font-bold uppercase tracking-[0.16em] rounded-[2px]">
-                  Reservation Not Completed
-                </div>
-                <h1 className="font-heading font-bold text-2xl sm:text-3xl uppercase tracking-tight text-foreground">
-                  Hold Released
-                </h1>
-                <p className="text-xs sm:text-sm text-muted-foreground font-light max-w-sm mx-auto leading-relaxed">
-                  The checkout session was cancelled or the 15-minute hold expired.
-                </p>
-              </>
-            )}
-          </div>
-
-          {/* Reference Callout */}
-          <div className="bg-[#111111] border border-accent/40 rounded-[2px] p-5 text-center space-y-1.5">
-            <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-mono font-semibold">
-              Official Booking Reference
-            </span>
-            <div className="font-heading font-bold text-3xl sm:text-4xl text-accent font-tabular tracking-wider">
-              {ref}
+              {isFailed && (
+                <>
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-500/15 border border-red-500/30 text-red-400 mx-auto">
+                    <span className="text-2xl font-bold">✕</span>
+                  </div>
+                  <LuxuryBadge variant="outline" className="text-[10px] text-red-400 border-red-500/30">
+                    Slot Hold Expired or Cancelled
+                  </LuxuryBadge>
+                  <h1 className="font-heading font-bold text-3xl sm:text-4xl uppercase tracking-tight text-white">
+                    Reservation Released
+                  </h1>
+                  <p className="text-xs sm:text-sm text-[#a0a1b0] max-w-md mx-auto leading-relaxed">
+                    The 15-minute slot lock window has expired. You may select
+                    another date or suite anytime.
+                  </p>
+                </>
+              )}
             </div>
-            <p className="text-[11px] text-muted-foreground font-mono pt-1">
-              Present this reference code or your mobile number upon arrival at venue reception.
-            </p>
-          </div>
 
-          {/* Venue & Self-Service Information */}
-          <div className="space-y-4 border-t border-border pt-6 text-xs">
-            <div className="flex items-start gap-3">
-              <MapPin className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
-              <div>
-                <span className="font-heading font-bold text-sm uppercase text-foreground block">
-                  {BRAND.name} KTV Lounge
+            {/* Boarding Pass Reference Card */}
+            <div className="rounded-2xl bg-white/[0.02] border border-white/[0.08] p-6 space-y-4">
+              <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
+                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#ff773d]">
+                  Official Booking Reference
                 </span>
-                <span className="text-muted-foreground font-light">
-                  4th Floor, City Walk Mall, Bonifacio Global City, Taguig, Metro Manila
+                <span className="font-mono text-xs text-emerald-400">
+                  CONFIRMED
                 </span>
+              </div>
+
+              <div className="flex items-baseline justify-between">
+                <div className="font-mono text-3xl sm:text-4xl font-black text-white tracking-widest">
+                  {ref}
+                </div>
+                <span className="text-[10px] font-mono text-[#8f909e] uppercase">
+                  Present at 5th Ave Reception
+                </span>
+              </div>
+
+              <div className="pt-2 border-t border-white/[0.06] grid grid-cols-2 gap-4 text-xs font-mono">
+                <div>
+                  <div className="text-[10px] text-[#8f909e] uppercase">
+                    Venue Location
+                  </div>
+                  <div className="text-white mt-0.5">{BRAND.suburb}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-[#8f909e] uppercase">
+                    Acoustic Envelope
+                  </div>
+                  <div className="text-[#ff8759] mt-0.5">STC 65 Isolated</div>
+                </div>
               </div>
             </div>
 
-            <div className="flex items-start gap-3">
-              <MessageSquare className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
-              <div className="space-y-1">
-                <span className="font-heading font-bold text-sm uppercase text-foreground block">
-                  Zero-Account Magic Link Sent
-                </span>
-                <p className="text-muted-foreground font-light leading-relaxed">
-                  A self-service management link has been dispatched to your mobile number and email. You can reschedule, add refreshments, or view room directions anytime without logging in.
-                </p>
+            {/* Arrival Protocol Checklist */}
+            <div className="space-y-3 text-xs">
+              <div className="text-[10px] font-mono uppercase tracking-wider text-[#8f909e]">
+                VIP Arrival Briefing:
               </div>
+              <ul className="space-y-2 text-[#d1d2db]">
+                <li className="flex items-start gap-2.5">
+                  <span className="text-[#10b981] font-bold">✓</span>
+                  <span>
+                    <strong>Valet Parking:</strong> Complimentary subterranean
+                    valet is waiting at our 5th Avenue private portal.
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-[#10b981] font-bold">✓</span>
+                  <span>
+                    <strong>15-Minute Grace Period:</strong> Your suite will be
+                    held for 15 minutes past start time before audio tuning.
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-[#10b981] font-bold">✓</span>
+                  <span>
+                    <strong>Dress Code:</strong> Smart casual nightlife attire.
+                    Strictly 18+ after 21:00 PHT.
+                  </span>
+                </li>
+              </ul>
             </div>
-          </div>
 
-          {/* Action Buttons */}
-          <div className="space-y-3 pt-2">
-            <Link
-              href="/book"
-              className="w-full h-12 bg-accent text-background hover:bg-accent/90 font-bold uppercase tracking-wider text-xs rounded-[2px] transition-all flex items-center justify-center gap-2 shadow"
-            >
-              <span>Book Another Room</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+            {/* Action Buttons */}
+            <div className="pt-4 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4">
+              <Link href="/" className="w-full sm:w-auto">
+                <Button
+                  variant="secondary"
+                  size="default"
+                  className="w-full font-semibold uppercase tracking-wider text-xs"
+                >
+                  Return to Home
+                </Button>
+              </Link>
 
-            <Link
-              href="/"
-              className="w-full h-12 border border-border text-foreground hover:bg-surface-raised font-bold uppercase tracking-wider text-xs rounded-[2px] transition-all flex items-center justify-center gap-2"
-            >
-              <Home className="w-4 h-4 text-muted-foreground" />
-              <span>Back to Home</span>
-            </Link>
-          </div>
+              <Link href="/book" className="w-full sm:w-auto">
+                <Button
+                  variant="default"
+                  size="default"
+                  trailingIcon={
+                    <svg
+                      className="w-3.5 h-3.5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
+                      />
+                    </svg>
+                  }
+                  className="w-full font-semibold uppercase tracking-wider text-xs"
+                >
+                  Book Another Suite
+                </Button>
+              </Link>
+            </div>
+          </DoubleBezel>
         </div>
       </main>
 
@@ -147,8 +223,8 @@ export default function BookingSuccessPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground font-mono text-sm">
-          Loading booking confirmation...
+        <div className="min-h-screen bg-[#050507] flex items-center justify-center text-xs font-mono text-white/50">
+          Loading Booking Confirmation...
         </div>
       }
     >

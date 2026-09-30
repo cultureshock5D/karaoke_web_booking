@@ -1,88 +1,150 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
-
-interface FaqItem {
-  question: string;
-  answer: string;
-  tag?: string;
-}
-
-const FAQS: FaqItem[] = [
-  {
-    question: "How does the reservation deposit work?",
-    answer:
-      "A small deposit is required to lock your room slot in our database. The deposit is deducted from your final bill, and the remaining balance is settled directly at the venue reception upon checkout.",
-  },
-  {
-    question: "What payment methods are supported?",
-    answer:
-      "We accept instant digital payments via GCash, Maya, GrabPay, QR Ph bank transfers, and Visa/Mastercard through PayMongo Hosted Checkout.",
-  },
-  {
-    question: "What is the cancellation or rescheduling policy?",
-    answer:
-      "Hold slots expire automatically after 15 minutes if unpaid. For confirmed bookings, please use your magic link or notify venue staff at least 4 hours prior. (TODO: confirm with venue exact cancellation refund policy).",
-    tag: "TODO: confirm with venue",
-  },
-  {
-    question: "What time should we arrive for our booking?",
-    answer:
-      "Please arrive 10 to 15 minutes before your reserved start time. Present your booking reference code or mobile number at reception for immediate room escort. (TODO: confirm with venue grace period policy).",
-    tag: "TODO: confirm with venue",
-  },
-];
+import React, { useState } from "react";
+import { FAQ_ITEMS, FaqItem } from "@/lib/design/faq-data";
+import { DoubleBezel } from "@/components/ui/DoubleBezel";
+import { LuxuryBadge } from "@/components/ui/LuxuryBadge";
+import { FluidReveal } from "@/components/ui/FluidReveal";
 
 export function FaqSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [activeCategory, setActiveCategory] = useState<string>("all");
+
+  const categories = [
+    { id: "all", label: "All Questions" },
+    { id: "booking", label: "Slot Lock Engine" },
+    { id: "sound", label: "Acoustics & Gear" },
+    { id: "hospitality", label: "Dining & Mixology" },
+    { id: "policies", label: "Venue Etiquette" },
+  ];
+
+  const filteredFaqs =
+    activeCategory === "all"
+      ? FAQ_ITEMS
+      : FAQ_ITEMS.filter((item) => item.category === activeCategory);
 
   const toggle = (idx: number) => {
     setOpenIndex(openIndex === idx ? null : idx);
   };
 
   return (
-    <section id="faq" className="py-24 bg-background border-b border-border">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section
+      id="faq"
+      className="relative w-full bg-[#050507] py-28 sm:py-36 px-4 sm:px-6 lg:px-8 select-none border-t border-white/[0.06]"
+    >
+      <div className="max-w-4xl mx-auto space-y-16">
         {/* Section Header */}
-        <div className="space-y-2 mb-12 text-center">
-          <span className="eyebrow text-accent block">Common Questions</span>
-          <h2 className="font-heading font-bold text-3xl sm:text-5xl uppercase tracking-tight text-foreground">
-            Frequently Asked
-          </h2>
+        <div className="text-center space-y-4">
+          <FluidReveal delayMs={100}>
+            <LuxuryBadge pulse pulseColor="orange" variant="orange">
+              VIP Concierge Knowledge Base
+            </LuxuryBadge>
+          </FluidReveal>
+
+          <FluidReveal delayMs={200}>
+            <h2
+              className="font-heading font-bold uppercase tracking-[-0.03em] text-white leading-[0.95]"
+              style={{ fontSize: "clamp(32px, 5.5vw, 64px)" }}
+            >
+              Frequently Asked <span className="text-[#ff773d]">Inquiries.</span>
+            </h2>
+          </FluidReveal>
+
+          <FluidReveal delayMs={300}>
+            <p className="max-w-xl mx-auto text-xs sm:text-sm text-[#8f909e] leading-relaxed">
+              Everything you need to know about our cryptographic slot lock,
+              studio acoustics, dress code, and arrival protocol.
+            </p>
+          </FluidReveal>
         </div>
 
-        {/* Accordion */}
-        <div className="divide-y divide-border border-y border-border">
-          {FAQS.map((faq, idx) => {
+        {/* Category Filter Pills */}
+        <FluidReveal delayMs={350} className="flex flex-wrap items-center justify-center gap-2">
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              type="button"
+              onClick={() => {
+                setActiveCategory(cat.id);
+                setOpenIndex(0);
+              }}
+              className={`rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] cursor-pointer ${
+                activeCategory === cat.id
+                  ? "bg-[#ff551f] text-white shadow-[0_0_15px_rgba(255,85,31,0.35)]"
+                  : "bg-white/[0.03] border border-white/[0.08] text-[#8f909e] hover:bg-white/[0.06] hover:text-white"
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </FluidReveal>
+
+        {/* Double-Bezel FAQ Accordion List */}
+        <div className="space-y-4">
+          {filteredFaqs.map((faq, idx) => {
             const isOpen = openIndex === idx;
             return (
-              <div key={idx} className="py-5">
-                <button
-                  type="button"
-                  onClick={() => toggle(idx)}
-                  className="w-full flex items-center justify-between gap-4 text-left focus-visible:outline-none group"
-                  aria-expanded={isOpen}
+              <FluidReveal key={idx} delayMs={50 * (idx + 1)}>
+                <DoubleBezel
+                  variant={isOpen ? "accent" : "default"}
+                  size="md"
+                  interactive
+                  className="w-full"
+                  innerClassName={`p-5 sm:p-6 transition-colors duration-500 ${
+                    isOpen ? "bg-[#0d0909]" : "bg-[#08080c]"
+                  }`}
                 >
-                  <span className="font-heading font-bold text-lg sm:text-xl uppercase tracking-tight text-foreground group-hover:text-accent transition-colors">
-                    {faq.question}
-                  </span>
-                  <div className={`p-1.5 border border-border rounded-[2px] transition-transform duration-150 ${isOpen ? 'rotate-180 bg-surface-raised text-accent' : 'text-muted-foreground'}`}>
-                    <ChevronDown className="w-4 h-4" />
-                  </div>
-                </button>
-
-                {isOpen && (
-                  <div className="pt-4 text-xs sm:text-sm text-muted-foreground font-light leading-relaxed space-y-2">
-                    <p>{faq.answer}</p>
-                    {faq.tag && (
-                      <span className="inline-block text-[10px] uppercase font-mono text-accent/90 border border-accent/30 bg-accent/5 px-2 py-0.5 rounded-[2px]">
-                        {faq.tag}
+                  <button
+                    type="button"
+                    onClick={() => toggle(idx)}
+                    className="w-full flex items-center justify-between gap-4 text-left cursor-pointer group focus-visible:outline-none"
+                    aria-expanded={isOpen}
+                  >
+                    <div className="space-y-1">
+                      <div className="font-mono text-[9px] uppercase tracking-[0.2em] text-[#ff773d]">
+                        CATEGORY // {faq.category.toUpperCase()}
+                      </div>
+                      <span className="font-heading font-bold text-lg sm:text-xl text-white group-hover:text-[#ff8759] transition-colors leading-snug block">
+                        {faq.question}
                       </span>
-                    )}
-                  </div>
-                )}
-              </div>
+                    </div>
+
+                    <div
+                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                        isOpen
+                          ? "bg-[#ff551f] border-[#ff773d] text-white rotate-180 shadow-[0_0_12px_rgba(255,85,31,0.4)]"
+                          : "bg-white/[0.05] border-white/[0.1] text-white/50 group-hover:text-white"
+                      }`}
+                    >
+                      <svg
+                        className="w-3.5 h-3.5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                        />
+                      </svg>
+                    </div>
+                  </button>
+
+                  {isOpen && (
+                    <div className="pt-4 mt-4 border-t border-white/[0.06] space-y-3 text-xs sm:text-sm text-[#a0a1b0] leading-relaxed">
+                      <p>{faq.answer}</p>
+                      {faq.detail && (
+                        <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.04] text-[11px] text-[#8f909e] font-mono leading-relaxed">
+                          <span className="text-[#ff773d] font-bold">NOTE: </span>
+                          {faq.detail}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </DoubleBezel>
+              </FluidReveal>
             );
           })}
         </div>

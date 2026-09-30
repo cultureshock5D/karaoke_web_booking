@@ -1,83 +1,148 @@
-import React from 'react';
-import Link from 'next/link';
-import { AddOn } from '@/types';
-import { ArrowRight, Utensils, Mic, Sparkles } from 'lucide-react';
+"use client";
+
+import React from "react";
+import Link from "next/link";
+import { AddOn } from "@/types";
+import { LUXURY_PACKAGES } from "@/lib/design/packages-data";
+import { DoubleBezel } from "@/components/ui/DoubleBezel";
+import { LuxuryBadge } from "@/components/ui/LuxuryBadge";
+import { Button } from "@/components/ui/button";
+import { FluidReveal } from "@/components/ui/FluidReveal";
 
 interface PackagesSectionProps {
-  addOns: AddOn[];
+  addOns?: AddOn[];
 }
 
-export function PackagesSection({ addOns }: PackagesSectionProps) {
-  const getCategoryIcon = (category?: string) => {
-    switch (category) {
-      case 'food':
-      case 'beverage':
-        return <Utensils className="w-4 h-4 text-accent" />;
-      case 'equipment':
-        return <Mic className="w-4 h-4 text-accent" />;
-      default:
-        return <Sparkles className="w-4 h-4 text-accent" />;
-    }
-  };
-
+export function PackagesSection({ addOns = [] }: PackagesSectionProps) {
   return (
-    <section id="packages" className="py-24 bg-[#0d0d0d] border-b border-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section
+      id="packages"
+      className="relative w-full bg-[#050507] py-28 sm:py-36 px-4 sm:px-6 lg:px-8 select-none border-t border-white/[0.06]"
+    >
+      <div className="max-w-7xl mx-auto space-y-20">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-12 border-b border-border">
-          <div className="space-y-2">
-            <span className="eyebrow text-accent block">Room Enhancements</span>
-            <h2 className="font-heading font-bold text-3xl sm:text-5xl uppercase tracking-tight text-foreground">
-              Food, Drinks & Gear
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/[0.06] pb-8">
+          <FluidReveal delayMs={100} className="max-w-2xl space-y-4">
+            <LuxuryBadge pulse pulseColor="orange" variant="orange">
+              Curated Nightlife Experiences
+            </LuxuryBadge>
+            <h2
+              className="font-heading font-bold uppercase tracking-[-0.03em] text-white leading-[0.95]"
+              style={{ fontSize: "clamp(32px, 5.5vw, 68px)" }}
+            >
+              VIP Packages & <span className="text-[#ff773d]">Bottle Service.</span>
             </h2>
-          </div>
-          <p className="text-sm text-muted-foreground max-w-md">
-            Add items during checkout so your table is stocked with chilled bottles and snacks when you step into the room.
-          </p>
+          </FluidReveal>
+
+          <FluidReveal delayMs={200} className="max-w-md text-xs sm:text-sm text-[#8f909e] leading-relaxed">
+            All packages include reserved soundstage hours, dedicated table
+            service, chilled welcome champagne, and signature tapas prepared to
+            order.
+          </FluidReveal>
         </div>
 
-        {/* 3-4 Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-12">
-          {addOns.slice(0, 3).map((addon) => (
-            <div
-              key={addon.$id}
-              className="p-6 bg-surface-raised border border-border rounded-[2px] flex flex-col justify-between space-y-6 hover:border-border/80 transition-colors"
-            >
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="w-8 h-8 rounded-[2px] bg-surface border border-border flex items-center justify-center">
-                    {getCategoryIcon(addon.category)}
+        {/* 3 Staggered Double-Bezel Package Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+          {LUXURY_PACKAGES.map((pkg, idx) => (
+            <FluidReveal key={pkg.id} delayMs={150 * (idx + 1)}>
+              <DoubleBezel
+                variant={pkg.isPopular ? "accent" : "default"}
+                size="lg"
+                interactive
+                glowColor={pkg.isPopular ? "orange" : "none"}
+                className="h-full"
+                innerClassName={`p-6 sm:p-8 flex flex-col justify-between h-full ${
+                  pkg.isPopular ? "bg-[#0d0909]" : "bg-[#08080c]"
+                }`}
+              >
+                <div className="space-y-6">
+                  {/* Top Header Badge & Tagline */}
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#ff773d]">
+                      TIER 0{idx + 1}
+                    </span>
+                    {pkg.badge && (
+                      <span className="rounded-full bg-[#ff551f]/15 border border-[#ff551f]/40 px-3 py-1 font-mono text-[9px] font-bold text-[#ff8759] shadow-[0_0_12px_rgba(255,85,31,0.25)]">
+                        {pkg.badge}
+                      </span>
+                    )}
                   </div>
-                  <span className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground font-mono">
-                    {addon.category || 'Package'}
-                  </span>
+
+                  <div className="space-y-2">
+                    <h3 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                      {pkg.name}
+                    </h3>
+                    <p className="text-xs text-[#a0a1b0] leading-relaxed">
+                      {pkg.tagline}
+                    </p>
+                  </div>
+
+                  {/* Price Block */}
+                  <div className="border-y border-white/[0.06] py-4 space-y-1">
+                    <div className="flex items-baseline gap-2">
+                      <span className="font-heading text-3xl sm:text-4xl font-bold text-white font-tabular">
+                        {pkg.pricePerSession}
+                      </span>
+                      <span className="font-mono text-xs text-[#8f909e]">
+                        / session
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3 text-[11px] font-mono text-[#d1d2db]">
+                      <span>{pkg.duration}</span>
+                      <span>·</span>
+                      <span>{pkg.capacity}</span>
+                    </div>
+                  </div>
+
+                  {/* Inclusions List */}
+                  <div className="space-y-2.5">
+                    <div className="text-[10px] font-mono uppercase tracking-wider text-[#8f909e]">
+                      Included In Package:
+                    </div>
+                    <ul className="space-y-2 text-xs text-[#d1d2db]">
+                      {pkg.inclusions.map((inc, iIdx) => (
+                        <li key={iIdx} className="flex items-start gap-2.5">
+                          <span className="text-[#ff551f] shrink-0 font-bold">✓</span>
+                          <span className="leading-snug">{inc}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <h3 className="font-heading font-bold text-xl uppercase tracking-tight text-foreground">
-                    {addon.name}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed font-light">
-                    {addon.description}
-                  </p>
-                </div>
-              </div>
+                {/* Bottom Action Trigger */}
+                <div className="pt-8 mt-8 border-t border-white/[0.06] space-y-3">
+                  <div className="text-[10px] text-[#8f909e] text-center">
+                    {pkg.recommendedFor}
+                  </div>
 
-              <div className="pt-4 border-t border-border/60 flex items-center justify-between">
-                <div>
-                  <span className="font-heading font-bold text-2xl text-accent font-tabular">
-                    ₱{addon.price.toLocaleString()}
-                  </span>
+                  <Link href="/book" className="block w-full">
+                    <Button
+                      variant={pkg.isPopular ? "default" : "secondary"}
+                      size="default"
+                      trailingIcon={
+                        <svg
+                          className="w-3.5 h-3.5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
+                          />
+                        </svg>
+                      }
+                      className="w-full font-semibold uppercase tracking-wider text-xs"
+                    >
+                      Book With This Package
+                    </Button>
+                  </Link>
                 </div>
-                <Link
-                  href="/book"
-                  className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider text-muted-foreground hover:text-accent font-medium transition-colors"
-                >
-                  <span>Select in booking</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            </div>
+              </DoubleBezel>
+            </FluidReveal>
           ))}
         </div>
       </div>

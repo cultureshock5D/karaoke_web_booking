@@ -1,9 +1,10 @@
-'use client';
+"use client";
 
-import React, { useMemo } from 'react';
-import { format, addDays, startOfDay } from 'date-fns';
-import { Clock, Calendar as CalendarIcon, Ban } from 'lucide-react';
-import { localToUtcIso } from '@/lib/datetime';
+import React, { useMemo } from "react";
+import { format, addDays, startOfDay } from "date-fns";
+import { localToUtcIso } from "@/lib/datetime";
+import { DoubleBezel } from "@/components/ui/DoubleBezel";
+import { LuxuryBadge } from "@/components/ui/LuxuryBadge";
 
 interface TimeSlotPickerProps {
   openingHour: number;
@@ -36,157 +37,180 @@ export const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({
     return Array.from({ length: 7 }, (_, i) => {
       const d = addDays(today, i);
       return {
-        dateStr: format(d, 'yyyy-MM-dd'),
-        dayName: i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : format(d, 'EEE'),
-        dayNumber: format(d, 'd'),
-        monthName: format(d, 'MMM'),
+        dateStr: format(d, "yyyy-MM-dd"),
+        dayName: i === 0 ? "Today" : i === 1 ? "Tomorrow" : format(d, "EEE"),
+        dayNumber: format(d, "d"),
+        monthName: format(d, "MMM"),
       };
     });
   }, []);
 
   // Generate available hourly slots based on venue opening/closing
   const timeSlots = useMemo(() => {
-    const slots: { time24: string; label: string; isUnavailable: boolean }[] = [];
+    const slots: {
+      time24: string;
+      label: string;
+      isUnavailable: boolean;
+      isPeak: boolean;
+    }[] = [];
     const currentHour = openingHour;
     const endHour = closingHour < openingHour ? closingHour + 24 : closingHour;
 
     for (let h = currentHour; h < endHour; h++) {
       const normalizedHour = h % 24;
-      const time24 = `${String(normalizedHour).padStart(2, '0')}:00`;
-      const period = normalizedHour >= 12 ? 'PM' : 'AM';
+      const time24 = `${String(normalizedHour).padStart(2, "0")}:00`;
+      const period = normalizedHour >= 12 ? "PM" : "AM";
       const displayHour = normalizedHour % 12 === 0 ? 12 : normalizedHour % 12;
       const label = `${displayHour}:00 ${period}`;
+      const isPeak = normalizedHour >= 20 || normalizedHour < 2;
 
       let isUnavailable = false;
       if (roomId && selectedDate) {
-        try {
-          const slotStartUtc = localToUtcIso(`${selectedDate} ${time24}`);
-          const slotKey = `${roomId}_${slotStartUtc}`;
-          if (unavailableSlotKeys.includes(slotKey)) {
-            isUnavailable = true;
+        for (let d = 0; d < durationHours; d++) {
+          const slotHour = (normalizedHour + d) % 24;
+          const slotTime24 = `${String(slotHour).padStart(2, "0")}:00`;
+          try {
+            const startUtcIso = localToUtcIso(selectedDate, slotTime24);
+            const slotKey = `${roomId}_${startUtcIso}`;
+            if (unavailableSlotKeys.includes(slotKey)) {
+              isUnavailable = true;
+              break;
+            }
+          } catch {
+            // fallback
           }
-        } catch {
-          // ignore date conversion errors
         }
       }
 
-      slots.push({ time24, label, isUnavailable });
+      slots.push({ time24, label, isUnavailable, isPeak });
     }
+
     return slots;
-  }, [openingHour, closingHour, selectedDate, roomId, unavailableSlotKeys]);
+  }, [openingHour, closingHour, selectedDate, durationHours, roomId, unavailableSlotKeys]);
+
+  const durations = [1, 2, 3, 4, 5];
 
   return (
-    <div className="space-y-6">
-      {/* 1. Date Selector Tabs */}
-      <div className="space-y-2.5">
-        <label className="text-xs uppercase tracking-[0.14em] font-semibold text-foreground flex items-center gap-1.5">
-          <CalendarIcon className="w-3.5 h-3.5 text-accent" />
-          <span>Select Date</span>
-        </label>
+    <div className="space-y-8 select-none">
+      {/* 1. Date Selection Strip */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#ff773d]">
+              Phase 01 // Select Date
+            </span>
+          </div>
+          <LuxuryBadge pulse pulseColor="emerald" variant="default" className="text-[9px]">
+            PHT (UTC+8) MANILA TIME
+          </LuxuryBadge>
+        </div>
 
-        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+        <div className="grid grid-cols-3 sm:grid-cols-7 gap-2.5">
           {upcomingDays.map((day) => {
             const isSelected = selectedDate === day.dateStr;
             return (
               <button
                 key={day.dateStr}
                 type="button"
-                aria-pressed={isSelected}
                 onClick={() => onDateChange(day.dateStr)}
-                className={`flex-shrink-0 flex flex-col items-center justify-center min-w-[76px] py-3 px-3 rounded-[2px] border transition-all duration-150 text-center outline-none focus-visible:ring-1 focus-visible:ring-accent ${
+                className={`group relative rounded-2xl p-3 text-center border transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] cursor-pointer ${
                   isSelected
-                    ? 'border-accent bg-accent text-background font-bold shadow'
-                    : 'border-border bg-surface hover:bg-surface-raised text-foreground'
+                    ? "bg-[#ff551f] border-[#ff773d] text-white shadow-[0_0_20px_rgba(255,85,31,0.35)] scale-[1.02]"
+                    : "bg-white/[0.02] border-white/[0.06] text-[#8f909e] hover:bg-white/[0.05] hover:text-white"
                 }`}
               >
-                <span className={`text-[10px] uppercase font-mono tracking-wider ${isSelected ? 'text-background/90' : 'text-muted-foreground'}`}>
+                <div className="text-[10px] uppercase tracking-wider font-medium opacity-80">
                   {day.dayName}
-                </span>
-                <span className="text-xl font-heading font-bold my-0.5 font-tabular">
+                </div>
+                <div className="font-heading text-2xl font-bold tracking-tight my-1 text-white">
                   {day.dayNumber}
-                </span>
-                <span className={`text-[10px] font-mono uppercase ${isSelected ? 'text-background/90' : 'text-muted-foreground'}`}>
+                </div>
+                <div className="text-[10px] font-mono opacity-80">
                   {day.monthName}
-                </span>
+                </div>
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* 2. Duration Selector (Segmented Control: 1h · 2h · 3h · 4h) */}
-      <div className="space-y-2.5">
+      {/* 2. Duration Segmented Control */}
+      <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <label className="text-xs uppercase tracking-[0.14em] font-semibold text-foreground flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-accent" />
-            <span>Duration (Segmented Hours)</span>
-          </label>
-          <span className="text-[11px] font-mono text-muted-foreground">Standard 1–4 Hour Blocks</span>
-        </div>
-
-        <div className="grid grid-cols-4 gap-1 p-1 bg-surface border border-border rounded-[2px]" role="radiogroup" aria-label="Booking duration">
-          {[1, 2, 3, 4].map((hours) => {
-            const isSelected = durationHours === hours;
-            return (
-              <button
-                key={hours}
-                type="button"
-                role="radio"
-                aria-checked={isSelected}
-                onClick={() => onDurationChange(hours)}
-                className={`py-2 text-xs font-heading font-bold uppercase tracking-wider rounded-[2px] transition-all duration-150 outline-none focus-visible:ring-1 focus-visible:ring-accent ${
-                  isSelected
-                    ? 'bg-accent text-background shadow'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-surface-raised'
-                }`}
-              >
-                {hours}h
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* 3. Start Time Grid */}
-      <div className="space-y-2.5">
-        <div className="flex items-center justify-between">
-          <label className="text-xs uppercase tracking-[0.14em] font-semibold text-foreground flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-accent" />
-            <span>Start Time</span>
-          </label>
-          <span className="text-[11px] font-mono text-accent bg-accent/10 border border-accent/20 px-2 py-0.5 rounded-[2px]">
-            Asia/Manila (PHT)
+          <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#ff773d]">
+            Phase 02 // Session Length
+          </span>
+          <span className="text-[11px] text-[#8f909e] font-mono">
+            {durationHours} {durationHours === 1 ? "Hour" : "Hours"} Allocated
           </span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+        <div className="grid grid-cols-5 gap-2 rounded-2xl bg-white/[0.02] border border-white/[0.06] p-1.5">
+          {durations.map((hrs) => {
+            const isSelected = durationHours === hrs;
+            return (
+              <button
+                key={hrs}
+                type="button"
+                onClick={() => onDurationChange(hrs)}
+                className={`rounded-xl py-2.5 text-xs font-semibold uppercase tracking-wider transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] cursor-pointer ${
+                  isSelected
+                    ? "bg-white/[0.1] border border-white/20 text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]"
+                    : "text-[#8f909e] hover:text-white"
+                }`}
+              >
+                {hrs} {hrs === 1 ? "Hour" : "Hours"}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 3. Time Slots Matrix */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#ff773d]">
+            Phase 03 // Start Time Slot
+          </span>
+          <div className="flex items-center gap-3 text-[10px] font-mono text-[#8f909e]">
+            <span className="flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-[#ff551f]" /> Available
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-[#8b5cf6]" /> Peak Nightlife
+            </span>
+            <span className="flex items-center gap-1.5 opacity-40">
+              <span className="h-2 w-2 rounded-full bg-white/20" /> Reserved
+            </span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
           {timeSlots.map((slot) => {
             const isSelected = selectedTime === slot.time24;
-            const disabled = slot.isUnavailable;
+            const isLocked = slot.isUnavailable;
 
             return (
               <button
                 key={slot.time24}
                 type="button"
-                disabled={disabled}
-                aria-disabled={disabled}
-                aria-pressed={isSelected}
+                disabled={isLocked}
                 onClick={() => onTimeChange(slot.time24)}
-                className={`relative py-3 px-2 rounded-[2px] text-xs font-heading font-medium border text-center transition-all duration-150 outline-none focus-visible:ring-1 focus-visible:ring-accent ${
-                  disabled
-                    ? 'border-border/40 bg-surface/50 text-muted-foreground/40 cursor-not-allowed line-through'
+                className={`relative rounded-xl p-3 text-center border transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                  isLocked
+                    ? "border-white/[0.03] bg-white/[0.01] text-white/20 cursor-not-allowed line-through"
                     : isSelected
-                    ? 'border-accent bg-accent text-background font-bold shadow'
-                    : 'border-border bg-surface text-foreground hover:border-border/90 hover:bg-surface-raised'
+                    ? "bg-[#ff551f] border-[#ff773d] text-white shadow-[0_0_20px_rgba(255,85,31,0.4)] cursor-pointer scale-[1.02]"
+                    : "bg-white/[0.02] border-white/[0.06] text-[#d1d2db] hover:bg-white/[0.06] hover:border-white/15 cursor-pointer"
                 }`}
               >
-                <span className="font-tabular">{slot.label}</span>
-                {disabled && (
-                  <span className="block text-[9px] uppercase tracking-wider font-mono text-destructive/80 no-underline mt-0.5">
-                    <Ban className="w-2.5 h-2.5 inline mr-1" />
-                    Held
-                  </span>
+                {slot.isPeak && !isLocked && !isSelected && (
+                  <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-[#8b5cf6] shadow-[0_0_6px_#8b5cf6]" />
                 )}
+                <div className="font-mono text-xs font-bold">{slot.label}</div>
+                <div className="text-[9px] font-mono uppercase tracking-wider opacity-70 mt-0.5">
+                  {isLocked ? "Unavailable" : slot.isPeak ? "Prime Hour" : "Standard"}
+                </div>
               </button>
             );
           })}

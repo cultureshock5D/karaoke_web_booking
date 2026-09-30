@@ -2,77 +2,212 @@
 @import "tw-animate-css";
 
 @theme inline {
-  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-heading: var(--font-space-grotesk), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-sans: var(--font-jakarta), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-heading: var(--font-space-grotesk), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--primary-foreground));
-  --color-surface: hsl(var(--surface));
-  --color-surface-raised: hsl(var(--surface-raised));
-  --color-card: hsl(var(--surface));
-  --color-card-foreground: hsl(var(--foreground));
-  --color-popover: hsl(var(--surface-raised));
-  --color-popover-foreground: hsl(var(--foreground));
-  --color-muted: hsl(var(--surface-raised));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--border));
-  --color-ring: hsl(var(--accent));
-  --color-success: hsl(var(--success));
-  --color-warning: hsl(var(--warning));
-  --color-destructive: hsl(var(--destructive));
+  --color-background: #050507;
+  --color-foreground: #f4f4f6;
+  --color-primary: #ffffff;
+  --color-primary-foreground: #050507;
+  --color-accent: #ff551f;
+  --color-accent-glow: #ff773d;
+  --color-accent-foreground: #ffffff;
+  --color-surface: #0a0a0e;
+  --color-surface-raised: #121218;
+  --color-surface-card: #0d0d12;
+  --color-muted: #161620;
+  --color-muted-foreground: #8f909e;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-subtle: rgba(255, 255, 255, 0.04);
+  --color-input: rgba(255, 255, 255, 0.06);
+  --color-ring: rgba(255, 85, 31, 0.4);
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-destructive: #ef4444;
 
-  --radius-none: 0px;
-  --radius-sm: 0px;
-  --radius-md: 2px;
-  --radius-lg: 4px;
+  --ease-fluid: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 :root {
-  --background: 0 0% 7%;            /* #111111 */
-  --foreground: 0 0% 95%;           /* #f2f2f2 */
-  --primary: 0 0% 95%;              /* #f2f2f2 */
-  --primary-foreground: 0 0% 7%;    /* #111111 */
-  --accent: 20 82% 50%;             /* electric orange #e85c1a */
-  --surface: 0 0% 10%;              /* #1a1a1a */
-  --surface-raised: 0 0% 14%;       /* #242424 */
-  --muted-foreground: 0 0% 68%;     /* 68% lightness passes AA contrast on #111111 */
-  --border: 0 0% 18%;               /* #2e2e2e */
-  --success: 142 60% 45%;           /* booking confirmed */
-  --warning: 38 92% 55%;            /* hold countdown */
-  --destructive: 0 72% 55%;         /* conflict / expired */
-  --radius: 2px;
+  --background: 240 10% 2%;          /* #050507 deepest OLED black */
+  --foreground: 240 5% 96%;          /* #f4f4f6 */
+  --primary: 0 0% 100%;
+  --primary-foreground: 240 10% 2%;
+  --accent: 14 100% 56%;             /* luxury electric neon orange #ff551f */
+  --surface: 240 10% 5%;             /* #0d0d12 */
+  --surface-raised: 240 8% 9%;       /* #13131a */
+  --muted-foreground: 235 6% 62%;
+  --border: 240 5% 15%;
+  --radius: 2rem;
 }
 
 @layer base {
   * {
-    border-color: hsl(var(--border));
+    border-color: rgba(255, 255, 255, 0.08);
     box-sizing: border-box;
   }
-  body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
-    font-family: var(--font-inter), sans-serif;
+  
+  html {
+    scroll-behavior: smooth;
+    background-color: #050507;
+    color: #f4f4f6;
   }
+
+  body {
+    background-color: #050507;
+    color: #f4f4f6;
+    font-family: var(--font-jakarta), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-space-grotesk), sans-serif;
+    font-family: var(--font-space-grotesk), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    letter-spacing: -0.03em;
   }
 }
 
+/* =========================================================================
+   HAPTIC DOUBLE-BEZEL & LUXURY SURFACE CLASSES
+   ========================================================================= */
+
+/* The Outer Machined Shell */
+.bezel-shell {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 2rem;
+  padding: 0.375rem;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.8),
+              0 0 1px 1px rgba(255, 255, 255, 0.04);
+  transition: all 0.7s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.bezel-shell:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 25px 50px -12px rgba(255, 85, 31, 0.08),
+              0 0 1px 1px rgba(255, 255, 255, 0.08);
+}
+
+/* The Inner Core Container */
+.bezel-core {
+  background: #09090d;
+  border-radius: calc(2rem - 0.375rem);
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.12),
+              inset 0 -1px 1px 0 rgba(0, 0, 0, 0.6);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ethereal Vantablack Glass Container */
+.ethereal-glass {
+  background: rgba(10, 10, 14, 0.75);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15),
+              0 16px 36px -12px rgba(0, 0, 0, 0.7);
+}
+
+/* Eyebrow Micro-Badge */
+.eyebrow-badge {
+  font-family: var(--font-jakarta), sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  color: #d1d2db;
+}
+
+/* Tabular Numerals for Prices and Decibels */
 .font-tabular {
   font-variant-numeric: tabular-nums;
 }
 
-.eyebrow {
-  font-family: var(--font-inter), sans-serif;
-  font-size: 11px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
+/* =========================================================================
+   KEYFRAME ANIMATIONS & PHYSICS
+   ========================================================================= */
+
+@keyframes orb-float-1 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translate3d(40px, -30px, 0) scale(1.12);
+    opacity: 0.55;
+  }
+}
+
+@keyframes orb-float-2 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1.08);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate3d(-35px, 25px, 0) scale(0.95);
+    opacity: 0.5;
+  }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(0.98);
+  }
+}
+
+@keyframes soundwave-bar {
+  0%, 100% {
+    height: 18%;
+  }
+  50% {
+    height: 94%;
+  }
+}
+
+.animate-orb-1 {
+  animation: orb-float-1 16s cubic-bezier(0.32, 0.72, 0, 1) infinite;
+}
+
+.animate-orb-2 {
+  animation: orb-float-2 20s cubic-bezier(0.32, 0.72, 0, 1) infinite;
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 4s cubic-bezier(0.32, 0.72, 0, 1) infinite;
+}
+
+/* Custom Scrollbar for sleek dark look */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050507;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 85, 31, 0.4);
 }
 
 @media (prefers-reduced-motion: reduce) {

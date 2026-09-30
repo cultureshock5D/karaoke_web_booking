@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { useMemo } from 'react';
-import { AddOn } from '@/types';
-import { Plus, Minus, Utensils, Mic, Sparkles } from 'lucide-react';
+import React, { useMemo } from "react";
+import { AddOn } from "@/types";
+import { DoubleBezel } from "@/components/ui/DoubleBezel";
 
 interface AddOnListProps {
   addOns: AddOn[];
@@ -15,18 +15,6 @@ export const AddOnList: React.FC<AddOnListProps> = ({
   selectedQuantities,
   onQuantityChange,
 }) => {
-  const getCategoryIcon = (category?: string) => {
-    switch (category) {
-      case 'food':
-      case 'beverage':
-        return <Utensils className="w-3.5 h-3.5 text-accent" />;
-      case 'equipment':
-        return <Mic className="w-3.5 h-3.5 text-accent" />;
-      default:
-        return <Sparkles className="w-3.5 h-3.5 text-accent" />;
-    }
-  };
-
   const groupedAddOns = useMemo(() => {
     const groups: Record<string, AddOn[]> = {
       equipment: [],
@@ -36,7 +24,7 @@ export const AddOnList: React.FC<AddOnListProps> = ({
     };
 
     addOns.forEach((item) => {
-      const cat = item.category || 'equipment';
+      const cat = item.category || "equipment";
       if (!groups[cat]) {
         groups[cat] = [];
       }
@@ -46,93 +34,108 @@ export const AddOnList: React.FC<AddOnListProps> = ({
     return groups;
   }, [addOns]);
 
-  const categoryTitles: Record<string, string> = {
-    equipment: 'Microphones & Equipment',
-    beverage: 'Beverages & Beer Buckets',
-    food: 'Food & Snack Platters',
-    party_props: 'Party Packs & Props',
+  const categoryTitles: Record<string, { title: string; subtitle: string }> = {
+    beverage: {
+      title: "Chilled Champagne & Craft Bar",
+      subtitle: "Pre-stocked in your suite's ice trough upon arrival",
+    },
+    food: {
+      title: "Chef-Prepared Tapas & Hot Platters",
+      subtitle: "Freshly made to order from our private culinary kitchen",
+    },
+    equipment: {
+      title: "Studio Microphone & Wireless Add-ons",
+      subtitle: "Additional Shure Axient transmitters & vocal monitors",
+    },
+    party_props: {
+      title: "Celebration Essentials",
+      subtitle: "VIP party lighting, sparklers, and photo amenities",
+    },
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10 select-none">
       {Object.entries(groupedAddOns).map(([catKey, items]) => {
         if (!items || items.length === 0) return null;
+        const catInfo = categoryTitles[catKey] || {
+          title: "Additional Suite Enhancements",
+          subtitle: "Pre-order for seamless arrival",
+        };
 
         return (
-          <div key={catKey} className="space-y-3">
-            <span className="text-[10px] uppercase tracking-[0.16em] font-mono text-muted-foreground block border-b border-border/60 pb-1">
-              {categoryTitles[catKey] || catKey}
-            </span>
+          <div key={catKey} className="space-y-4">
+            <div className="border-b border-white/[0.06] pb-2">
+              <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#ff773d]">
+                CATEGORY // {catKey.toUpperCase()}
+              </div>
+              <h4 className="font-heading text-lg font-bold text-white tracking-tight">
+                {catInfo.title}
+              </h4>
+              <p className="text-xs text-[#8f909e]">{catInfo.subtitle}</p>
+            </div>
 
-            <div className="space-y-2">
-              {items.map((addOn) => {
-                const qty = selectedQuantities[addOn.$id] || 0;
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {items.map((addon) => {
+                const qty = selectedQuantities[addon.$id] || 0;
+                const isSelected = qty > 0;
+
                 return (
-                  <div
-                    key={addOn.$id}
-                    className={`flex items-center justify-between p-3.5 rounded-[2px] border transition-all duration-150 ${
-                      qty > 0
-                        ? 'border-accent bg-surface-raised'
-                        : 'border-border bg-surface hover:border-border/80'
+                  <DoubleBezel
+                    key={addon.$id}
+                    variant={isSelected ? "accent" : "default"}
+                    size="sm"
+                    className="w-full"
+                    innerClassName={`p-4 flex items-center justify-between gap-4 transition-colors duration-500 ${
+                      isSelected ? "bg-[#0d0909]" : "bg-[#08080c]"
                     }`}
                   >
-                    <div className="flex items-start gap-3 flex-1 min-w-0 pr-3">
-                      <div className="p-2 rounded-[2px] bg-[#111111] border border-border flex-shrink-0 mt-0.5">
-                        {getCategoryIcon(addOn.category)}
+                    <div className="space-y-1 min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-heading font-bold text-sm text-white truncate">
+                          {addon.name}
+                        </span>
+                        {isSelected && (
+                          <span className="rounded-full bg-[#ff551f]/20 border border-[#ff551f]/40 px-2 py-0.5 text-[9px] font-mono text-[#ff8759]">
+                            {qty}x Added
+                          </span>
+                        )}
                       </div>
-                      <div>
-                        <h4 className="font-heading font-bold text-sm uppercase tracking-tight text-foreground leading-tight">
-                          {addOn.name}
-                        </h4>
-                        <p className="text-xs text-muted-foreground mt-0.5 font-light leading-relaxed">
-                          {addOn.description}
-                        </p>
-                        <div className="text-sm font-heading font-bold text-accent mt-1 font-tabular">
-                          ₱{addOn.price.toLocaleString()}
-                        </div>
+                      <p className="text-[11px] text-[#8f909e] line-clamp-1">
+                        {addon.description}
+                      </p>
+                      <div className="font-heading font-bold text-sm text-[#ff773d] font-tabular pt-0.5">
+                        ₱{addon.price.toLocaleString("en-PH")}
                       </div>
                     </div>
 
-                    {/* Quantity Stepper */}
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      {qty > 0 ? (
-                        <>
-                          <button
-                            type="button"
-                            aria-label={`Decrease quantity of ${addOn.name}`}
-                            onClick={() => onQuantityChange(addOn.$id, qty - 1)}
-                            className="w-8 h-8 rounded-[2px] border border-border bg-[#111111] flex items-center justify-center hover:bg-surface-raised text-foreground transition-colors outline-none focus-visible:ring-1 focus-visible:ring-accent"
-                          >
-                            <Minus className="w-3.5 h-3.5" />
-                          </button>
-                          <span className="w-6 text-center text-sm font-heading font-bold text-foreground font-tabular">
-                            {qty}
-                          </span>
-                          <button
-                            type="button"
-                            aria-label={`Increase quantity of ${addOn.name}`}
-                            onClick={() =>
-                              onQuantityChange(addOn.$id, Math.min(addOn.maxQuantity, qty + 1))
-                            }
-                            disabled={qty >= addOn.maxQuantity}
-                            className="w-8 h-8 rounded-[2px] border border-border bg-[#111111] flex items-center justify-center hover:bg-surface-raised text-foreground transition-colors disabled:opacity-30 outline-none focus-visible:ring-1 focus-visible:ring-accent"
-                          >
-                            <Plus className="w-3.5 h-3.5" />
-                          </button>
-                        </>
-                      ) : (
-                        <button
-                          type="button"
-                          aria-label={`Add ${addOn.name}`}
-                          onClick={() => onQuantityChange(addOn.$id, 1)}
-                          className="px-3 py-1.5 rounded-[2px] border border-accent/40 bg-accent/10 text-accent text-xs font-bold uppercase tracking-wider hover:bg-accent hover:text-background transition-colors flex items-center gap-1 outline-none focus-visible:ring-1 focus-visible:ring-accent"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                          <span>Add</span>
-                        </button>
-                      )}
+                    {/* Haptic Stepper Buttons */}
+                    <div className="flex items-center gap-2 bg-white/[0.03] border border-white/[0.08] p-1 rounded-full shrink-0">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          onQuantityChange(addon.$id, Math.max(0, qty - 1))
+                        }
+                        disabled={qty === 0}
+                        aria-label={`Decrease ${addon.name}`}
+                        className="flex h-7 w-7 items-center justify-center rounded-full bg-white/[0.05] text-white/70 hover:bg-white/[0.1] hover:text-white disabled:opacity-20 disabled:pointer-events-none transition-all duration-300 active:scale-95 cursor-pointer font-bold text-xs"
+                      >
+                        −
+                      </button>
+
+                      <span className="w-5 text-center font-mono text-xs font-bold text-white font-tabular">
+                        {qty}
+                      </span>
+
+                      <button
+                        type="button"
+                        onClick={() => onQuantityChange(addon.$id, qty + 1)}
+                        aria-label={`Increase ${addon.name}`}
+                        className="flex h-7 w-7 items-center justify-center rounded-full bg-[#ff551f] text-white hover:bg-[#ff6836] transition-all duration-300 active:scale-95 cursor-pointer font-bold text-xs shadow-[0_0_8px_rgba(255,85,31,0.4)]"
+                      >
+                        +
+                      </button>
                     </div>
-                  </div>
+                  </DoubleBezel>
                 );
               })}
             </div>

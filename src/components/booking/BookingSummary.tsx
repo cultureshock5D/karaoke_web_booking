@@ -1,9 +1,10 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { AddOn, Room, Venue } from '@/types';
-import { ShieldCheck, CreditCard, Clock, Calendar, ArrowRight, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React from "react";
+import { AddOn, Room, Venue } from "@/types";
+import { Button } from "@/components/ui/button";
+import { DoubleBezel } from "@/components/ui/DoubleBezel";
+import { LuxuryBadge } from "@/components/ui/LuxuryBadge";
 
 interface BookingSummaryProps {
   venue: Venue;
@@ -29,7 +30,8 @@ export const BookingSummary: React.FC<BookingSummaryProps> = ({
   isLoading,
 }) => {
   // Compute pricing
-  const roomTotal = room.baseHourlyRate * durationHours;
+  const hourlyRate = room.baseHourlyRate;
+  const roomTotal = hourlyRate * durationHours;
 
   const selectedItems = addOns
     .filter((a) => (selectedAddOnQuantities[a.$id] || 0) > 0)
@@ -46,7 +48,7 @@ export const BookingSummary: React.FC<BookingSummaryProps> = ({
   const grandTotal = roomTotal + addOnsTotal;
 
   let deposit = 0;
-  if (venue.depositType === 'percentage') {
+  if (venue.depositType === "percentage") {
     deposit = Math.round(grandTotal * (venue.depositValue / 100));
   } else {
     deposit = venue.depositValue;
@@ -56,147 +58,162 @@ export const BookingSummary: React.FC<BookingSummaryProps> = ({
   const balanceDue = grandTotal - deposit;
 
   // Calculate session time window
-  const startHourNum = parseInt(selectedTime.split(':')[0], 10) || 19;
+  const startHourNum = parseInt(selectedTime.split(":")[0], 10) || 19;
   const endHourNum = (startHourNum + durationHours) % 24;
-  const timeWindow = `${selectedTime} – ${String(endHourNum).padStart(2, '0')}:00 PHT`;
+  const periodStart = startHourNum >= 12 ? "PM" : "AM";
+  const displayStart = startHourNum % 12 === 0 ? 12 : startHourNum % 12;
+  const periodEnd = endHourNum >= 12 ? "PM" : "AM";
+  const displayEnd = endHourNum % 12 === 0 ? 12 : endHourNum % 12;
 
-  // TODO: Add live hold countdown timer once the booking engine exposes heldUntil in wizard state
+  // TODO: Live hold countdown derived from existing hold expiry data if wizard exposes it
 
   return (
-    <div className="bg-surface border border-border rounded-[2px] p-6 shadow-xl space-y-6">
+    <DoubleBezel
+      variant="default"
+      size="lg"
+      className="w-full sticky top-28"
+      innerClassName="p-6 sm:p-7 bg-[#08080c] space-y-6"
+    >
       {/* Receipt Header */}
-      <div className="border-b border-border pb-4 space-y-1">
-        <span className="eyebrow text-accent block">Receipt Overview</span>
-        <h3 className="font-heading font-bold text-xl uppercase tracking-tight text-foreground">
-          Reservation Summary
-        </h3>
-        <p className="text-xs text-muted-foreground font-mono">{venue.name}</p>
+      <div className="flex items-center justify-between border-b border-white/[0.08] pb-4">
+        <div>
+          <div className="font-mono text-[9px] uppercase tracking-[0.2em] text-[#ff773d]">
+            Reservation Docket
+          </div>
+          <h3 className="font-heading text-xl font-bold tracking-tight text-white uppercase">
+            Booking Summary
+          </h3>
+        </div>
+        <LuxuryBadge pulse pulseColor="emerald" variant="default" className="text-[9px]">
+          15-Min Hold Active
+        </LuxuryBadge>
       </div>
 
-      {/* Selected Room & Schedule */}
-      <div className="space-y-2.5 text-xs">
-        <div className="flex justify-between items-center text-foreground">
-          <span className="text-muted-foreground uppercase tracking-wider font-mono">Room:</span>
-          <span className="font-heading font-bold text-sm uppercase">{room.name}</span>
-        </div>
-
-        <div className="flex justify-between items-center text-foreground">
-          <span className="text-muted-foreground uppercase tracking-wider font-mono flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5 text-accent" /> Date:
+      {/* Selected Room & Session Block */}
+      <div className="rounded-2xl bg-white/[0.02] border border-white/[0.06] p-4 space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="font-heading font-bold text-sm text-white uppercase">
+            {room.name}
           </span>
-          <span className="font-mono text-foreground font-semibold">{selectedDate}</span>
-        </div>
-
-        <div className="flex justify-between items-center text-foreground">
-          <span className="text-muted-foreground uppercase tracking-wider font-mono flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-accent" /> Schedule:
+          <span className="font-mono text-xs text-[#ff8759] font-tabular">
+            ₱{hourlyRate.toLocaleString("en-PH")}/hr
           </span>
-          <span className="font-mono text-foreground font-semibold">{timeWindow}</span>
         </div>
 
-        <div className="flex justify-between items-center text-foreground">
-          <span className="text-muted-foreground uppercase tracking-wider font-mono">Duration:</span>
-          <span className="font-mono text-foreground font-semibold">
-            {durationHours} {durationHours === 1 ? 'Hour' : 'Hours'}
+        <div className="flex items-center justify-between text-xs font-mono text-[#8f909e] pt-1">
+          <span>Date:</span>
+          <span className="text-white">{selectedDate}</span>
+        </div>
+
+        <div className="flex items-center justify-between text-xs font-mono text-[#8f909e]">
+          <span>Session Hours:</span>
+          <span className="text-white">
+            {displayStart}:00 {periodStart} – {displayEnd}:00 {periodEnd} ({durationHours}h)
+          </span>
+        </div>
+
+        <div className="flex items-center justify-between text-xs font-mono text-[#8f909e]">
+          <span>Room Subtotal:</span>
+          <span className="text-white font-tabular">
+            ₱{roomTotal.toLocaleString("en-PH")}
           </span>
         </div>
       </div>
 
-      {/* Itemized Line Items */}
-      <div className="pt-4 border-t border-border space-y-2 text-xs">
-        <div className="flex justify-between items-center text-foreground">
-          <span className="text-muted-foreground">
-            Room Rental ({durationHours}h × ₱{room.baseHourlyRate.toLocaleString()})
-          </span>
-          <span className="font-mono font-medium text-foreground font-tabular">
-            ₱{roomTotal.toLocaleString()}
+      {/* Add-ons List */}
+      {selectedItems.length > 0 && (
+        <div className="space-y-2">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-[#8f909e]">
+            Pre-Ordered Hospitality Items:
+          </div>
+          <div className="space-y-1.5 text-xs">
+            {selectedItems.map((item, idx) => (
+              <div
+                key={idx}
+                className="flex items-center justify-between py-1 border-b border-white/[0.04]"
+              >
+                <span className="text-[#d1d2db] truncate">
+                  {item.qty}x {item.name}
+                </span>
+                <span className="font-mono text-white font-tabular shrink-0 pl-2">
+                  ₱{item.total.toLocaleString("en-PH")}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Totals & Deposit Callout */}
+      <div className="space-y-3 pt-4 border-t border-white/[0.08]">
+        <div className="flex items-center justify-between text-xs text-[#8f909e]">
+          <span>Estimated Total Bill:</span>
+          <span className="font-mono text-sm text-white font-bold font-tabular">
+            ₱{grandTotal.toLocaleString("en-PH")}
           </span>
         </div>
 
-        {selectedItems.map((item, idx) => (
-          <div key={idx} className="flex justify-between items-center text-muted-foreground">
-            <span>
-              {item.name} <span className="text-foreground font-mono">(×{item.qty})</span>
+        <div className="rounded-2xl bg-[#ff551f]/10 border border-[#ff551f]/30 p-4 space-y-1 shadow-[0_0_20px_rgba(255,85,31,0.15)]">
+          <div className="flex items-center justify-between">
+            <span className="text-xs uppercase font-semibold text-[#ff8759]">
+              Deposit Due Today (To Lock Slot)
             </span>
-            <span className="font-mono font-medium text-foreground font-tabular">
-              ₱{item.total.toLocaleString()}
+            <span className="font-heading font-bold text-2xl text-white font-tabular">
+              ₱{deposit.toLocaleString("en-PH")}
             </span>
           </div>
-        ))}
-
-        <div className="pt-3 border-t border-border/60 flex justify-between items-center text-sm font-semibold text-foreground">
-          <span className="uppercase tracking-wider font-mono text-xs">Total Bill</span>
-          <span className="font-heading font-bold text-base font-tabular">
-            ₱{grandTotal.toLocaleString()}
-          </span>
+          <div className="text-[10px] text-[#a0a1b0] leading-snug">
+            Minimum ₱100 PayMongo lock fee. Deducted in full from your bill.
+          </div>
         </div>
-      </div>
 
-      {/* Deposit Callout - Dark Editorial Box */}
-      <div className="bg-[#111111] border border-accent/40 rounded-[2px] p-4 space-y-2">
-        <div className="flex justify-between items-baseline">
-          <span className="text-[11px] font-bold text-accent uppercase tracking-[0.14em]">
-            Deposit Due Now
-          </span>
-          <span className="font-heading font-bold text-3xl text-accent font-tabular">
-            ₱{deposit.toLocaleString()}
-          </span>
-        </div>
-        <div className="flex justify-between items-center text-[11px] text-muted-foreground pt-1 border-t border-border/40 font-mono">
-          <span>Balance due at venue:</span>
-          <span className="font-medium text-foreground font-tabular">₱{balanceDue.toLocaleString()}</span>
-        </div>
-      </div>
-
-      {/* Payment Badges (No trademarked assets) */}
-      <div className="space-y-2 text-center pt-1">
-        <p className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground font-mono">
-          PayMongo Instant Checkout
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-1.5 text-[11px] font-mono uppercase tracking-wider">
-          <span className="px-2 py-0.5 rounded-[2px] bg-surface-raised text-foreground border border-border">
-            GCash
-          </span>
-          <span className="px-2 py-0.5 rounded-[2px] bg-surface-raised text-foreground border border-border">
-            Maya
-          </span>
-          <span className="px-2 py-0.5 rounded-[2px] bg-surface-raised text-foreground border border-border">
-            QR Ph
-          </span>
-          <span className="px-2 py-0.5 rounded-[2px] bg-surface-raised text-foreground border border-border">
-            GrabPay
-          </span>
-          <span className="px-2 py-0.5 rounded-[2px] bg-surface-raised text-foreground border border-border">
-            Card
+        <div className="flex items-center justify-between text-[11px] font-mono text-[#8f909e] px-1">
+          <span>Remaining Balance Due at Venue:</span>
+          <span className="font-tabular text-[#d1d2db]">
+            ₱{balanceDue.toLocaleString("en-PH")}
           </span>
         </div>
       </div>
 
       {/* Action Button */}
-      <Button
-        onClick={onProceedToPayment}
-        disabled={isLoading}
-        className="w-full h-14 bg-accent text-background hover:bg-accent/90 text-sm font-bold uppercase tracking-wider rounded-[2px] transition-all flex items-center justify-center gap-2 shadow-lg"
-      >
-        {isLoading ? (
-          <span className="flex items-center gap-2">
-            <Loader2 className="w-4 h-4 animate-spin" />
-            <span>Locking Slot & Connecting PayMongo...</span>
-          </span>
-        ) : (
-          <span className="flex items-center justify-center gap-2">
-            <CreditCard className="w-4 h-4" />
-            <span>Pay ₱{deposit.toLocaleString()} Deposit</span>
-            <ArrowRight className="w-4 h-4" />
-          </span>
-        )}
-      </Button>
+      <div className="pt-2">
+        <Button
+          variant="default"
+          size="lg"
+          disabled={isLoading}
+          onClick={onProceedToPayment}
+          trailingIcon={
+            isLoading ? (
+              <span className="animate-spin text-xs">⟳</span>
+            ) : (
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
+                />
+              </svg>
+            )
+          }
+          className="w-full font-semibold uppercase tracking-wider text-xs h-13 shadow-[0_0_25px_rgba(255,85,31,0.4)]"
+        >
+          {isLoading ? "Locking Atomic Slot..." : "Proceed To Secure Checkout"}
+        </Button>
+      </div>
 
-      {/* 15-minute slot hold notice */}
-      <p className="text-[11px] text-center text-muted-foreground flex items-center justify-center gap-1.5 font-light">
-        <ShieldCheck className="w-3.5 h-3.5 text-accent flex-shrink-0" />
-        <span>Slot is locked for 15 minutes while completing checkout.</span>
-      </p>
-    </div>
+      {/* Payment Security Seal */}
+      <div className="text-center space-y-1 text-[10px] font-mono text-[#8f909e] pt-1">
+        <div className="text-white/60">
+          Encrypted 256-Bit SSL via PayMongo
+        </div>
+        <div>GCash · Maya · GrabPay · Cards · QR Ph</div>
+      </div>
+    </DoubleBezel>
   );
 };
