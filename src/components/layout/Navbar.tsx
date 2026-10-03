@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { BRAND } from "@/lib/design/brand";
-import { LuxuryBadge } from "@/components/ui/LuxuryBadge";
 import { Button } from "@/components/ui/button";
 
 interface NavbarProps {
@@ -74,16 +73,6 @@ export function Navbar({ isSlim = false }: NavbarProps) {
                 </span>
               </Link>
 
-              <div className="hidden lg:flex items-center">
-                <LuxuryBadge
-                  pulse
-                  pulseColor="emerald"
-                  variant="default"
-                  className="py-0.5 px-2.5 text-[9px] bg-white/[0.03] border-white/[0.08]"
-                >
-                  STC 65 · 3 SUITES ONLINE
-                </LuxuryBadge>
-              </div>
             </div>
 
             {/* Slim Mode Back Button or Desktop Navigation */}
