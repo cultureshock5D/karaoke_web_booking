@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "test": "tsx scripts/test-booking-engine.ts",
-    "setup:db": "tsx scripts/setup-appwrite-schema.ts"
+    "test:app": "tsx tests/app-validation.test.ts",
+    "setup:db": "tsx scripts/setup-appwrite-schema.ts",
+    "seed:accounts": "tsx tools/seed-test-accounts.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

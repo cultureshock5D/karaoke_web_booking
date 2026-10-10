@@ -8,7 +8,7 @@ import { FluidReveal } from "@/components/ui/FluidReveal";
 
 export function StatsStrip() {
   return (
-    <section className="relative w-full bg-[#050507] py-16 sm:py-24 px-4 sm:px-6 lg:px-8 overflow-hidden select-none border-y border-white/[0.06]">
+    <section className="relative w-full bg-[#050507] py-12 sm:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden select-none border-y border-white/[0.06]">
       <div className="max-w-7xl mx-auto">
         <FluidReveal delayMs={100}>
           <DoubleBezel
@@ -39,7 +39,7 @@ export function StatsStrip() {
                     <div className="text-[11px] sm:text-xs font-semibold uppercase tracking-[0.16em] text-[#ff773d]">
                       {stat.label}
                     </div>
-                    <div className="text-[10px] text-[#8f909e] leading-snug line-clamp-2">
+                    <div className="text-[10px] text-[#8f909e] leading-snug">
                       {stat.detail}
                     </div>
                   </div>

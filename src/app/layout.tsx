@@ -26,22 +26,21 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: `${BRAND.name} · ${BRAND.tagline} | Audiophile Soundstage & VIP Karaoke`,
+  title: `${BRAND.name} · ${BRAND.tagline} | Book Private Rooms Online`,
   description:
-    "Manila's premier private acoustics sanctuary. Precision Genelec monitoring, Martin Audio soundstage, Shure Axient wireless telemetry, and bespoke mixology. Reserve your private suite in 90 seconds.",
+    "Private soundproof karaoke rooms in Bonifacio Global City. Rooms from ₱600/hr for 1 to 20 guests. 15-minute guaranteed slot hold with GCash, Maya, and cards.",
   keywords: [
-    "luxury karaoke manila",
-    "private soundstage",
-    "audiophile karaoke suite",
-    "vip ktv bento",
-    "martin audio karaoke",
-    "genelec monitoring room",
-    "high-end nightlife manila",
+    "karaoke bgc",
+    "private ktv manila",
+    "private karaoke rooms bgc",
+    "barkada karaoke taguig",
+    "karaoke birthday party bgc",
+    "encore karaoke booking",
   ],
   openGraph: {
-    title: `${BRAND.name} — Private Soundstage & VIP Suites`,
+    title: `${BRAND.name} — Private Karaoke Rooms in BGC`,
     description:
-      "Acoustically isolated private suites engineered to STC 65 studio standard with Shure Axient wireless microphones and Martin Audio arrays.",
+      "Private soundproof karaoke rooms for friends, birthdays, and parties in BGC. Rooms from ₱600/hr with instant online booking.",
     type: "website",
     locale: "en_PH",
   },

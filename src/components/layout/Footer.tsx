@@ -34,22 +34,22 @@ export function Footer() {
   return (
     <footer
       id="contact"
-      className="relative w-full border-t border-white/[0.08] bg-[#050507] pt-24 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden select-none"
+      className="relative w-full border-t border-white/[0.08] bg-[#050507] pt-20 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden select-none"
     >
-      {/* Subtle Bottom Ambient Radial Glow */}
+      {/* Ambient Radial Glow */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 h-[450px] w-[900px] rounded-full opacity-15 blur-[140px]"
+        className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 h-[400px] w-[800px] rounded-full opacity-15 blur-[140px]"
         style={{
           background:
             "radial-gradient(ellipse at 50% 100%, rgba(255,85,31,0.5) 0%, transparent 70%)",
         }}
       />
 
-      <div className="max-w-7xl mx-auto space-y-16 relative z-10">
-        {/* Top Tier: Venue Identity, VIP Concierge, and Fast Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
-          {/* Col 1: Brand & Sound Stage Mission */}
+      <div className="max-w-7xl mx-auto space-y-14 relative z-10">
+        {/* Top Tier: Venue Info, Contact, and Hours */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
+          {/* Col 1: Brand & Nightlife Mission */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#ff551f] font-mono text-xs font-bold text-white shadow-[0_0_12px_#ff551f]">
@@ -60,18 +60,16 @@ export function Footer() {
               </span>
             </div>
             <p className="text-xs text-[#8f909e] leading-relaxed max-w-sm">
-              Metro Manila’s private audiophile soundstage. STC 65 recording
-              studio isolation, Genelec mastering monitors, Shure Axient
-              telemetry, and bespoke mixology.
+              Private soundproof karaoke rooms in Bonifacio Global City. Built for friend groups, birthdays, and effortless nights out.
             </p>
-            <div className="flex items-center gap-2 pt-2">
+            <div className="flex items-center gap-2 pt-1">
               <LuxuryBadge pulse pulseColor="emerald" variant="default" className="text-[9px]">
                 {manilaTime || "14:00 - 04:00 PHT"}
               </LuxuryBadge>
             </div>
           </div>
 
-          {/* Col 2: Physical Venue Coordinates */}
+          {/* Col 2: Location & Valet */}
           <div className="space-y-3">
             <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#ff773d]">
               Location & Valet
@@ -87,13 +85,13 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Col 3: VIP Concierge Direct Channels */}
+          {/* Col 3: Direct Contact Channels */}
           <div className="space-y-3">
             <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#ff773d]">
-              VIP Reservations Desk
+              Reservations & Concierge
             </div>
             <div className="space-y-1 text-xs">
-              <div className="text-[#8f909e]">Direct Phone:</div>
+              <div className="text-[#8f909e]">Phone:</div>
               <a
                 href={`tel:${BRAND.vipConciergePhone}`}
                 className="font-mono text-white hover:text-[#ff8759] transition-colors block"
@@ -113,37 +111,37 @@ export function Footer() {
               </a>
             </div>
             <div className="text-[11px] text-[#8f909e] pt-1">
-              {BRAND.dressCode}
+              Dress Code: {BRAND.dressCode}
             </div>
           </div>
 
-          {/* Col 4: Audiophile Partners & Quick Links */}
+          {/* Col 4: Operating Hours & Booking Reassurance */}
           <div className="space-y-3">
             <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#ff773d]">
-              Acoustic Certifications
+              Hours & Booking
             </div>
             <div className="space-y-2 text-xs text-[#d1d2db]">
               <div className="flex items-center justify-between border-b border-white/[0.06] pb-1.5">
-                <span>Transducers</span>
-                <span className="font-mono text-[11px] text-[#8f909e]">Shure Axient Digital</span>
+                <span>Operating Hours</span>
+                <span className="font-mono text-[11px] text-white">2:00 PM – 4:00 AM</span>
               </div>
               <div className="flex items-center justify-between border-b border-white/[0.06] pb-1.5">
-                <span>Sound Reinforcement</span>
-                <span className="font-mono text-[11px] text-[#8f909e]">Martin Audio London</span>
+                <span>Slot Protection</span>
+                <span className="font-mono text-[11px] text-emerald-400">15-Min Hold</span>
               </div>
               <div className="flex items-center justify-between border-b border-white/[0.06] pb-1.5">
-                <span>Nearfield Master</span>
-                <span className="font-mono text-[11px] text-[#8f909e]">Genelec 8341A SAM</span>
+                <span>Online Deposit</span>
+                <span className="font-mono text-[11px] text-white">30% via GCash/Maya</span>
               </div>
               <div className="flex items-center justify-between">
-                <span>Isolation Rating</span>
-                <span className="font-mono text-[11px] text-emerald-400">STC 65 Decoupled</span>
+                <span>Room Rates</span>
+                <span className="font-mono text-[11px] text-[#ff8759]">From ₱600/hr</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Middle Tier: Double-Bezel Floating Utility Strip */}
+        {/* Middle Tier: Floating Navigation Strip */}
         <DoubleBezel
           variant="glass"
           size="md"
@@ -152,23 +150,27 @@ export function Footer() {
         >
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 text-xs font-mono uppercase tracking-wider text-[#8f909e]">
             <Link href="/#rooms" className="hover:text-white transition-colors">
-              Suites
-            </Link>
-            <span>·</span>
-            <Link href="/#acoustics" className="hover:text-white transition-colors">
-              Acoustics
+              Rooms
             </Link>
             <span>·</span>
             <Link href="/#packages" className="hover:text-white transition-colors">
               Packages
             </Link>
             <span>·</span>
+            <Link href="/#how-it-works" className="hover:text-white transition-colors">
+              How It Works
+            </Link>
+            <span>·</span>
+            <Link href="/#rental" className="hover:text-white transition-colors">
+              Encore to Go
+            </Link>
+            <span>·</span>
             <Link href="/#faq" className="hover:text-white transition-colors">
               FAQ
             </Link>
             <span>·</span>
-            <Link href="/book" className="text-[#ff8759] hover:text-[#ff773d] transition-colors">
-              Instant Reserve ↗
+            <Link href="/book" className="text-[#ff8759] hover:text-[#ff773d] transition-colors font-semibold">
+              Book a Room ↗
             </Link>
           </div>
 
@@ -184,13 +186,13 @@ export function Footer() {
           </button>
         </DoubleBezel>
 
-        {/* Bottom Tier: Payment Channels & Copyright */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-white/[0.06] text-[11px] text-[#8f909e]">
+        {/* Bottom Tier: Gateways & Copyright */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-white/[0.06] text-[11px] text-[#8f909e]">
           <div className="flex items-center gap-3">
             <span className="font-mono uppercase tracking-wider text-[#5f606e]">
-              Accepted Instant Gateways:
+              Accepted Payment Gateways:
             </span>
-            <span className="font-mono text-white/60">GCash · Maya · GrabPay · Visa · Mastercard · QR Ph</span>
+            <span className="font-mono text-white/60">GCash · Maya · Cards · GrabPay · QRPH</span>
           </div>
 
           <div className="font-mono tracking-wider">
